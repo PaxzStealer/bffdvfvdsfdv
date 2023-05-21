@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spin Wheel</title>
+    <style>
+        body {
+            text-align: center;
+        }
+
+        #spin-wheel {
+            width: 400px;
+            height: 400px;
+            margin: 50px auto;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 5s;
+        }
+
+        #spin-wheel div {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 50%;
+            background-color: #f7f7f7;
+        }
+
+        #text-box {
+            width: 400px;
+            height: 300px;
+            margin: 0 auto;
+            margin-right: 50px;
+            margin-top: 50px;
+            font-size: 20px;
+            resize: none;
+        }
+
+        #button-container {
+            margin-top: 20px;
+        }
+
+        #spin-result-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #f7f7f7;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            display: none;
+        }
+
+        #spin-result-popup h2 {
+            margin-top: 0;
+        }
+
+        #close-button {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Spin Wheel</h1>
+
+    <div id="spin-wheel">
+        <div></div>
+    </div>
+
+    <textarea id="text-box" placeholder="Type hier de woorden"></textarea>
+
+    <div id="button-container">
+        <button onclick="addWords()">Toevoegen</button>
+        <button onclick="spinWheel()">Draaien</button>
+    </div>
+
+    <div id="spin-result-popup">
+        <h2>Resultaat:</h2>
+        <p id="result-word"></p>
+        <button id="close-button" onclick="closePopup()">Sluiten</button>
+    </div>
+
+    <script>
+        var spinWheel = document.getElementById("spin-wheel");
+        var spinResultPopup = document.getElementById("spin-result-popup");
+        var resultWord = document.getElementById("result-word");
+        var closePopupButton = document.getElementById("close-button");
+        var words = [];
+
+        function addWords() {
+            var textBox = document.getElementById("text-box");
+            var text = textBox.value.trim();
+
+            if (text !== "") {
+                var newWords = text.split("\n");
+                words = words.concat(newWords);
+                textBox.value = "";
+                updateSpinWheel();
+            }
+        }
+
+        function updateSpinWheel() {
+            var wheelDiv = spinWheel.querySelector("div");
+            wheelDiv.textContent = "";
+
+            for (var i = 0; i < words.length; i++) {
+                var wordSpan = document.createElement("span");
+                wordSpan.textContent = words[i];
+                wheelDiv.appendChild(wordSpan);
+                wheelDiv.appendChild(document.createElement("br"));
+            }
+        }
+
+        function spinWheel() {
+            if (words.length > 0) {
+                var wheelDiv = spinWheel.querySelector("div");
+                var degrees = 360 * Math.random() + 720;
+                wheelDiv.style.transform = "rotateX(" + degrees + "deg)";
+
+                setTimeout(function() {
+                    var resultIndex = Math.floor(Math.random() * words.length);
+                    var result = words[resultIndex];
+                    showPopup(result);
+                }, 5000);
+            }
+        }
+
+        function showPopup(result) {
+            resultWord.textContent = result;
+            spinResultPopup.style.display = "block";
+        }
+
+        function closePopup() {
+            spinResultPopup.style.display = "none";
+        }
+    </script>
+</body>
+</html>
